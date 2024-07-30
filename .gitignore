@@ -1,0 +1,19 @@
+# Go build files
+*.out
+*.exe
+*.o
+*.a
+
+# Dependency directories
+vendor/
+
+# IDE files
+.idea/
+.vscode/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
