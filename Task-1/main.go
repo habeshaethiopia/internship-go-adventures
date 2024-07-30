@@ -10,10 +10,11 @@ import (
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 )
-func helper(s string) bool{
+
+func helper(s string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z]+( [a-zA-Z]+)*$`)
- 	return re.MatchString(s)
- 
+	return re.MatchString(s)
+
 }
 
 func Grade(marks float64) string {
@@ -88,7 +89,7 @@ e3:
 	}
 	percentage := total / float64(n)
 	boldGreen.Printf("Name: %s\n", name)
-	table:= tablewriter.NewWriter(os.Stdout)
+	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Subject", "Marks", "Grade"})
 	for sub, mar := range marks {
 		table.Append([]string{sub, fmt.Sprintf("%.2f", mar), Grade(mar)})
@@ -103,5 +104,9 @@ e3:
 	a = strings.ToLower(a)
 	if a == "y" || a == "yes" {
 		goto again
+	} else {
+		print("\033[H\033[2J")
+
 	}
+
 }
