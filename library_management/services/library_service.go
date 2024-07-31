@@ -21,7 +21,11 @@ type Library struct {
 	Members map[int]models.Member
 }
 
-// var mylib Library
+// var mylib Library{
+// 	Book:  make(map[int]models.Book),
+// 	Member: make(map[int]models.Member),
+// }
+
 
 func (mylib *Library) AddBook(book models.Book) {
 	book.Status = "Available"

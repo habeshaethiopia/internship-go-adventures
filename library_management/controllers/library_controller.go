@@ -23,6 +23,7 @@ func helper(s string) bool {
 	return re.MatchString(s)
 }
 func Input() {
+	numofbooks:=1
 	clear()
 	lib := &services.Library{
 		Books:   make(map[int]models.Book),
@@ -78,9 +79,11 @@ func Input() {
 			newBook.Author = text
 
 			newBook.Status = "Available"
-			newBook.ID = len(lib.Books) + 1
+			newBook.ID = numofbooks
+			numofbooks++
 
 			lib.AddBook(newBook)
+
 			// Call the function to add a new book
 		case 2:
 			clear()
@@ -148,6 +151,7 @@ func Input() {
 			input.Print("Enter the member Name: ")
 			// fmt.Scanln(&newMember.Name)
 			text, _ := reader.ReadString('\n')
+			text = strings.TrimSpace(text)
 			if !helper(text) {
 				color.Red("Error in input author must be a alphabet and separated by comma or &")
 				continue
