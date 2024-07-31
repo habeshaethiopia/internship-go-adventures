@@ -19,8 +19,8 @@ func clear() {
 
 }
 func helper(s string) bool {
-    re := regexp.MustCompile(`^([a-zA-Z]+( [a-zA-Z]+)*)([,&] [a-zA-Z]+( [a-zA-Z]+)*)*$`)
-    return re.MatchString(s)
+	re := regexp.MustCompile(`^[a-zA-Z\s,&]+$`)
+	return re.MatchString(s)
 }
 func Input() {
 	clear()
@@ -31,9 +31,9 @@ func Input() {
 	boldwelcome := color.New(color.FgCyan, color.Bold)
 	input := color.New(color.FgCyan)
 	color.New(color.FgGreen, color.Bold).Println("Welcome to the Library Management System!")
-	reader:=bufio.NewReader(os.Stdin)
+	reader := bufio.NewReader(os.Stdin)
 	for {
-		
+
 		fmt.Println("Choose an option:")
 		color.Cyan("1. Add a new book")
 		color.Cyan("2. Remove an existing book")
@@ -61,21 +61,21 @@ func Input() {
 			boldwelcome.Println("Add a new book")
 			input.Print("Enter the book Title: ")
 			// fmt.Scanln(&newBook.Title)
-			newBook.Title,_=reader.ReadString('\n')
-			newBook.Title=strings.TrimSpace(newBook.Title)
-			if newBook.Title==""{
+			newBook.Title, _ = reader.ReadString('\n')
+			newBook.Title = strings.TrimSpace(newBook.Title)
+			if newBook.Title == "" {
 				color.Red("Error in input title must be a alphabet")
 				continue
 			}
 			input.Print("Enter the book Author: ")
 			// fmt.Scanln(&newBook.Author)
-			text,_:=reader.ReadString('\n')
-			if !helper(text){
+			text, _ := reader.ReadString('\n')
+			if !helper(text) {
 				color.Red("Error in input author must be a alphabet and separated by comma or &")
 				continue
 
 			}
-			newBook.Author=text
+			newBook.Author = text
 
 			newBook.Status = "Available"
 			newBook.ID = len(lib.Books) + 1
@@ -114,7 +114,7 @@ func Input() {
 				color.Red("Error in input id must be a number")
 				continue
 			}
-			if lib.BorrowBook(bookID, memberID) !=nil{
+			if lib.BorrowBook(bookID, memberID) != nil {
 				color.Red("fail to borrow")
 			}
 			// Call the function to borrow a book
@@ -136,7 +136,7 @@ func Input() {
 				color.Red("Error in input id must be a number")
 				continue
 			}
-			if lib.ReturnBook(bookID, memberID)!=nil{
+			if lib.ReturnBook(bookID, memberID) != nil {
 				color.Red("fail to return ")
 
 			}
@@ -147,22 +147,20 @@ func Input() {
 			newMember := models.Member{}
 			input.Print("Enter the member Name: ")
 			// fmt.Scanln(&newMember.Name)
-			text,_:=reader.ReadString('\n')
-			if !helper(text){
+			text, _ := reader.ReadString('\n')
+			if !helper(text) {
 				color.Red("Error in input author must be a alphabet and separated by comma or &")
 				continue
 			}
-			newMember.Name=text
-			newMember.ID=len(lib.Members)+1
+			newMember.Name = text
+			newMember.ID = len(lib.Members) + 1
 			lib.AddMembers(newMember)
-			
-			
 
 		case 6:
 			clear()
 			boldwelcome.Println("List of all available books")
-			books:=lib.ListAvailableBooks()
-			if len(books)==0{
+			books := lib.ListAvailableBooks()
+			if len(books) == 0 {
 				color.Red("No books available")
 				continue
 			}
@@ -182,8 +180,8 @@ func Input() {
 				color.Red("Error in input id must be a number")
 				continue
 			}
-			books:=lib.ListBorrowedBooks(memberID)
-			if len(books)==0{
+			books := lib.ListBorrowedBooks(memberID)
+			if len(books) == 0 {
 
 				color.Red("No books available")
 				continue
@@ -193,12 +191,12 @@ func Input() {
 				tab.AddRow(book.ID, book.Title, book.Author, book.Status)
 			}
 			tab.Print()
-		
+
 			// Call the function to list all borrowed books by a member
 		case 8:
 			tab := table.New("ID", "Name")
-			for _ ,mem:= range lib.Members{
-				tab.AddRow(mem.ID,mem.Name)
+			for _, mem := range lib.Members {
+				tab.AddRow(mem.ID, mem.Name)
 			}
 			tab.Print()
 		case 9:
