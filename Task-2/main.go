@@ -13,6 +13,9 @@ func wordCount(s string) map[string]int {
 	dictionary := make(map[string]int)
 	words := strings.Split(s, " ")
 	for _, word := range words {
+		if word ==""{
+			continue
+		}
 		dictionary[word]++
 	}
 	return dictionary
