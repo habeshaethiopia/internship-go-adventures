@@ -25,6 +25,7 @@ func GetTaskById(c *gin.Context) {
 
 func DeleteTask(ctx *gin.Context) {
 	id := ctx.Param("id")
+	
 
 	for i, val := range data.Tasks {
 		if val.ID == id {
@@ -39,6 +40,15 @@ func DeleteTask(ctx *gin.Context) {
 }
 func PostTask(ctx *gin.Context) {
 	var newTask models.Task
+	//check if the id is already in use
+	id:=ctx.Param("id")
+	for _, t := range data.Tasks {
+		if t.ID == id {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID already in use"})
+			return
+		}
+	}
+
 
 	if err := ctx.ShouldBindJSON(&newTask); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
