@@ -56,6 +56,16 @@ func UpdateMany(collection *mongo.Collection, filter bson.D, update bson.D) {
 
 	fmt.Printf("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
 }
+func findOne(collection *mongo.Collection, filter bson.D) {
+	var result Trainer
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Found a single document: %+v\n", result)
+	
+}
 func Find( collection *mongo.Collection) {
 	// Pass these options to the Find method
 findOptions := options.Find()
@@ -69,6 +79,7 @@ cur, err := collection.Find(context.TODO(), bson.D{{}}, findOptions)
 if err != nil {
     log.Fatal(err)
 }
+
 
 // Finding multiple documents returns a cursor
 // Iterating through the cursor allows us to decode documents one at a time
@@ -102,6 +113,7 @@ func Delete(collection *mongo.Collection) {
 	}
 	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
 }
+
 func main() {
 	// set client option
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
