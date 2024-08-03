@@ -2,10 +2,13 @@ package models
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
 // Task represents a task with its properties.
 type Task struct {
-	ID          string    `json:"id"`
+	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	DueDate    	time.Time `json:"due_date"`

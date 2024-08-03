@@ -14,6 +14,7 @@ import (
 	// "github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -21,9 +22,13 @@ func GetTask(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, data.FindAll(data.Tasks))
 }
 func GetTaskById(c *gin.Context) {
-    id := c.Param("id")
-
-    result, err := data.FindOne(data.Tasks, bson.M{"id": id})
+    id,err:= primitive.ObjectIDFromHex(c.Param("id"))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+    }
+	fmt.Printf("id: %v\n",id)
+    result, err := data.FindOne(data.Tasks, bson.M{"_id": id})
     if err != nil {
         c.IndentedJSON(http.StatusNotFound, gin.H{"message": "task not found"})
         return
@@ -33,16 +38,21 @@ func GetTaskById(c *gin.Context) {
 }
 
 func DeleteTask(ctx *gin.Context) {
-	id := ctx.Param("id")
+	id,err:= primitive.ObjectIDFromHex(ctx.Param("id"))
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+    }
+    
 
-	result,er:=data.FindOne(data.Tasks, bson.M{"id": id})
+	result,er:=data.FindOne(data.Tasks, bson.M{"_id": id})
 	if er != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 		return
 	}
 	fmt.Println(result)
 
-	err := data.Delete(data.Tasks, bson.M{"id": id})
+	err = data.Delete(data.Tasks, bson.M{"_id": id})
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 		return
@@ -53,24 +63,26 @@ func DeleteTask(ctx *gin.Context) {
 func PostTask(ctx *gin.Context) {
     var newTask models.Task
 	
+	
 	if err := ctx.ShouldBindJSON(&newTask); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if newTask.ID == "" || newTask.Title == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID and Title are required"})
+	if newTask.Title == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Title is required"})
 		return
 	}
+	newTask.ID = primitive.NewObjectID()
     // Check if the ID is already in use
     id := newTask.ID
-    existingTask, err := data.FindOne(data.Tasks, bson.M{"id": id})
+    existingTask, err := data.FindOne(data.Tasks, bson.M{"_id": id})
 	fmt.Println( id, err, mongo.ErrNoDocuments)
     if err != nil {
         if err!= mongo.ErrNoDocuments {
             ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check ID"})
             return
         }
-    } else if existingTask.ID != "" {
+    } else if existingTask.ID != primitive.NilObjectID {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID already in use"})
         return
     }
@@ -87,9 +99,13 @@ func PostTask(ctx *gin.Context) {
 }
 
 func PutTask(ctx *gin.Context) {
-    id := ctx.Param("id")
-
-	result,er:=data.FindOne(data.Tasks, bson.M{"id": id})
+    d := ctx.Param("id")
+	id, err := primitive.ObjectIDFromHex(d)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+	result,er:=data.FindOne(data.Tasks, bson.M{"_id": id})
 	if er != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 		return
@@ -103,7 +119,7 @@ func PutTask(ctx *gin.Context) {
         return
     }
 	fmt.Printf("updatedTask.id: %s   id: %s\n", updatedTask.ID, id)
-	if updatedTask.ID == ""{
+	if updatedTask.ID == primitive.NilObjectID{
 		updatedTask.ID=id
 	}
 	if updatedTask.ID != id {
@@ -120,7 +136,7 @@ func PutTask(ctx *gin.Context) {
 		updatedTask.DueDate=result.DueDate
 	}
 
-	    updateResult, err := data.UpdateOne(data.Tasks, bson.M{"id": id}, bson.M{"$set": updatedTask})
+	    updateResult, err := data.UpdateOne(data.Tasks, bson.M{"_id": id}, bson.M{"$set": updatedTask})
     if err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update task"})
         return
