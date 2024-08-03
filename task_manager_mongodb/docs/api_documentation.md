@@ -136,5 +136,21 @@ A JSON object representing the deleted task.
 ## Postman Documentation
 
 You can also view the Postman API documentation [here](https://documenter.getpostman.com/view/37364622/2sA3kdBdij).
+
+## Data Storage
+
+This API uses MongoDB as its data storage solution. When a new task is created via the API, it is inserted into a MongoDB collection. The task data is stored as a document in the collection, with each field in the task represented as a field in the document.
+
+Here's an example of how a task is stored in MongoDB:
+
+```json
+{
+    "id": "1",
+    "Title": "Task 1",
+    "Description": "First task",
+    "DueDate": "2022-03-01T14:30:00Z",
+    "Status": "Pending"
+}
 ```
 
+When tasks are fetched via the API, the API queries the MongoDB collection and returns the matching documents as tasks.

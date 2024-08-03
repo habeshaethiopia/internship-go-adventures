@@ -75,14 +75,14 @@ Remember that this task is focused on backend development skills using Go and Gi
 
 # File Storage Implementation
 
-In addition to the in-memory data storage, this project also includes a simple file storage system for persisting tasks. The tasks are saved to a JSON file, and loaded from the file when the program starts.
+persisting tasks. The tasks are saved to a MongoDB database, and loaded from the database when the program starts.
 
 Here's how it works:
 
-- When the program starts, it calls the `LoadTasksFromFile` function, which opens the JSON file, decodes the JSON data into a slice of tasks, and returns the tasks.
+- When the program starts, it connects to the MongoDB database.
 
-- When tasks are added or modified, the program calls the `SaveTasksToFile` function, which creates a new JSON file (or truncates the existing file), encodes the tasks slice to JSON, and writes it to the file.
+- When tasks are added or modified, the program calls the appropriate function (`InsertOne`, `UpdateOne`, etc.) to perform the operation in the MongoDB database.
 
-This allows the tasks to persist across multiple runs of the program.
+This allows the tasks to persist across multiple runs of the program and provides a more robust solution for large amounts of data and concurrent read/write operations.
 
-Please note that this is a simple implementation and is not suitable for large amounts of data or for concurrent read/write operations. For a more robust solution, a database or a dedicated storage service should be used.
+Please note that you need to have a running MongoDB server and provide the connection string in the `main.go` file.
