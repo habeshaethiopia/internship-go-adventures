@@ -39,7 +39,11 @@ func registerUser(c *gin.Context) {
 
 	}
 	//TODO: Impliment user registration logic
-
+	if _, ok := users[user.Email]; ok {
+		c.JSON(400, gin.H{"error": "user already exists"})
+		return
+	}
+	
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "error while hashing the password"})

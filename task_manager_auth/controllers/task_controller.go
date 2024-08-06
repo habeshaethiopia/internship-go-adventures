@@ -19,16 +19,31 @@ import (
 )
 
 func GetTask(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, data.FindAll(data.Tasks))
+	// Get the logged user's ID
+	userID,err :=primitive.ObjectIDFromHex(c.GetString("userID")) 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+	// Find all tasks associated with the logged user's ID
+	tasks, err := data.FindOneUser(data.Users, primitive.M{"_id": userID})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve tasks"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, tasks)
 }
 func GetTaskById(c *gin.Context) {
     id,err:= primitive.ObjectIDFromHex(c.Param("id"))
+
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
     }
 	fmt.Printf("id: %v\n",id)
     result, err := data.FindOne(data.Tasks, bson.M{"_id": id})
+	
     if err != nil {
         c.IndentedJSON(http.StatusNotFound, gin.H{"message": "task not found"})
         return
