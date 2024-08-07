@@ -7,5 +7,4 @@ type User struct {
 	Email    string               `json:"email"`
 	Password string               `json:"password"`
 	Role     string               `json:"role"`
-	TaskIDs  []primitive.ObjectID `bson:"task_ids,omitempty" json:"task_ids,omitempty"`
 }

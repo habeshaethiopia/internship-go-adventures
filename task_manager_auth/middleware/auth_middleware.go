@@ -2,10 +2,15 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/fatih/color"
+	"net/http"
 	"strings"
 
+	"github.com/fatih/color"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	//"os"
+
+	"task/models"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -29,20 +34,29 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.Parse(authParts[1], func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
+		tokenString := authParts[1]
+        claims := &models.Claims{}
 
-			return jwtsecret, nil
-		})
-		if err != nil || !token.Valid {
-			c.JSON(401, gin.H{"error": "Invalid token"})
-			c.Abort()
-			return
+        token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+            if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+                return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+            }
+            return jwtsecret, nil
+        })
 
-		}
-		color.Green("Token is valid")
-		c.Next()
+        if err != nil || !token.Valid {
+            c.JSON(401, gin.H{"error": "Invalid token", "err": err, "token": token})
+            c.Abort()
+            return
+        }
+		
+        c.Set("claims", claims)
+		color.Green("claims: %v\n",claims)
+		userID, err := primitive.ObjectIDFromHex(claims.UserID)
+		if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID","clamis": claims, "claims.Id": userID})
+		return
+	}
+        c.Next()
 	}
 }

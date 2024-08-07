@@ -52,13 +52,13 @@ func FindOneUser(collection *mongo.Collection, filter bson.M) (models.User, erro
 	fmt.Printf("Found a single document: %+v\n", result)
 	return result, nil
 }
-func DeleteUser(collection *mongo.Collection, filter bson.M) error {
+func DeleteUser(collection *mongo.Collection, filter bson.M) ( *mongo.DeleteResult, error) {
 	deleteResult, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		return err
+		return deleteResult, err
 	}
 	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
-	return nil
+	return deleteResult, nil
 }
 func InsertUser(collection *mongo.Collection, data models.User) error {
 
