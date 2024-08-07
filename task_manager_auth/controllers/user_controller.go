@@ -101,6 +101,7 @@ func UpdateUser(c *gin.Context) {
 	} else {
 		if claims.Role != "admin" {
 			c.JSON(http.StatusForbidden, gin.H{"error": "you are anauthorized"})
+			return
 		}
 	}
 	updateResult, err := data.UpdateUser(data.Users, bson.M{"_id": id}, bson.M{"$set": updatedUser})
