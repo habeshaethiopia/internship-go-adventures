@@ -1,51 +1,49 @@
-# Task Management REST API
+## Implementing Authentication and Authorization with JWT for Task Management API
 
-## Objective
+### Objective
+Enhance the Task Management API by adding authentication and authorization mechanisms using JSON Web Tokens (JWT). This enhancement will introduce user management, login functionality, and protected routes to restrict access based on user roles.
 
-The objective of this task is to create a simple Task Management REST API using Go programming language and Gin Framework. This API will support basic CRUD operations for managing tasks.
+### Requirements
+- Implement user management functionality to support creating user accounts with unique usernames and passwords.
+- Introduce JWT-based authentication to validate user credentials and generate access tokens upon successful login.
+- Secure the API endpoints by implementing middleware to validate JWT tokens for authentication.
+- Define user roles (e.g., admin, regular user) and restrict access to certain endpoints based on user roles.
+- Implement login functionality to authenticate users and generate JWT tokens for subsequent API requests.
+- Ensure that only authenticated users with valid JWT tokens can access protected routes.
+- Update the API documentation to include instructions for user registration, login, and usage of protected endpoints.
+- Test the API endpoints with and without authentication to verify proper enforcement of access control rules.
+- Verify that user credentials are securely stored and transmitted using appropriate encryption and hashing techniques.
 
-## Requirements
+### Instructions
+1. Implement user management endpoints for user registration and login:
+   - `POST /register`: Create a new user account with a unique username and password.
+   - `POST /login`: Authenticate users and generate JWT tokens upon successful login.
+2. Generate JWT tokens with appropriate claims (e.g., user ID, username, expiration time) using a secure JWT library.
+3. Implement middleware to validate JWT tokens for protected routes, ensuring that only authenticated users can access them.
+4. Define user roles and restrict access to certain endpoints based on user roles using middleware.
+5. Update existing API endpoints to enforce authentication and authorization requirements for protected routes.
+6. Test the API endpoints using Postman or similar tools to verify that authentication and authorization are working correctly.
+7. Verify that only authenticated users can access protected routes, and unauthorized access attempts are rejected with appropriate error responses.
+8. Ensure that user credentials are securely stored using appropriate encryption and hashing techniques to protect against security threats.
+9. Document the authentication and authorization process, including instructions for user registration, login, and usage of protected endpoints.
+10. Update the API documentation to reflect changes related to authentication and authorization, including any modifications to request and response formats.
 
-Implement a REST API with the following endpoints:
-
-- `GET /tasks`: Get a list of all tasks.
-- `GET /tasks/:id`: Get the details of a specific task.
-- `PUT /tasks/:id`: Update a specific task. This endpoint should accept a JSON body with the new details of the task.
-- `DELETE /tasks/:id`: Delete a specific task.
-- `POST /tasks`: Create a new task. This endpoint should accept a JSON body with the task's title, description, due date, and status.
-
-Use an in-memory database to store tasks. Database integration with persistent storage will be covered in later lessons, so for this task, focus on implementing data storage in memory.
-
-Ensure proper error handling and response codes for different scenarios such as successful operations, invalid requests, and resources not found.
-
-Provide clear and concise documentation for each endpoint using postman, including expected request payloads and response formats.
-
-Utilize Postman to test each endpoint of the Task Management API.
-
-## Instructions
-
-- Use Go programming language and Gin Framework to develop the API.
-- Implement the specified endpoints adhering to the defined requirements.
-- Utilize an in-memory database to store task data.
-- Test the API endpoints using appropriate tools (e.g., Postman, curl).
-- Write clean, well-structured, and maintainable code with proper comments.
-- Ensure the code is properly formatted and follows best practices for Go development.
-- Document the API endpoints with details on request and response formats.
-- Submit your code along with any necessary instructions for running and testing the API.
-
-## Folder Structure
-
+### Folder Structure
 Follow the following folder structure for this task:
 
 ```
 task_manager/
 ├── main.go
 ├── controllers/
-│   └── task_controller.go
+│   └── controller.go
 ├── models/
-│   └── task.go
+│   ├── task.go
+│   └── user.go
 ├── data/
-│   └── task_service.go
+│   ├── task_service.go
+│   └── user_service.go
+├── middleware/
+│   └── auth_middleware.go
 ├── router/
 │   └── router.go
 ├── docs/
@@ -53,36 +51,26 @@ task_manager/
 └── go.mod
 ```
 
-- `main.go`: Entry point of the application.
-- `controllers/task_controller.go`: Handles incoming HTTP requests and invokes the appropriate service methods.
-- `models/`: Defines the data structures used in the application.
-- `data/task_service.go`: Contains business logic and data manipulation functions.
-- `router/router.go`: Sets up the routes and initializes the Gin router and Defines the routing configuration for the API.
-- `docs/api_documentation.md`: Contains API documentation and other related documentation.
+- [`main.go`](task_manager_auth/main.go"): Entry point of the application.
+- [`controllers/controller.go`]( ): Handles incoming HTTP requests and invokes the appropriate service methods for both tasks and user authentication.
+- [`models/task.go`](task_manager_auth/models/task.go"): Defines the Task struct.
+- [`models/user.go`](task_manager_auth/models/user.go"): Defines the User struct.
+- [`data/task_service.go`](task_manager_auth/data/task_service.go"): Contains business logic and data manipulation functions for tasks.
+- [`data/user_service.go`](task_manager_auth/data/user_service.go"): Contains business logic and data manipulation functions for users, including hashing passwords.
+- [`middleware/auth_middleware.go`](task_manager_auth/middleware/auth_middleware.go"): Implements middleware to validate JWT tokens for authentication and authorization.
+- [`router/router.go`](task_manager_auth/router/router.go"): Sets up the routes and initializes the Gin router and defines the routing configuration for the API.
+- [`docs/api_documentation.md`](task_manager_auth/docs/api_documentation.md"): Contains API documentation and other related documentation.
+- [`go.mod`](task_manager_auth/go.mod"): Defines the module and its dependencies.
 
-## Evaluation Criteria
-
-- Implementation of all required endpoints according to specifications.
-- Correct handling of various HTTP methods and response codes.
-- Proper error handling and validation of input data.
-- Efficient and well-structured code following Go best practices.
-- Clear and comprehensive documentation of API endpoints.
+### Evaluation Criteria
+- Successful implementation of user management functionality for user registration and login.
+- Proper generation and validation of JWT tokens for authentication.
+- Correct enforcement of access control rules for protected routes based on user roles.
+- Secure storage and transmission of user credentials using encryption and hashing techniques.
+- Verification of authentication and authorization functionality through testing of API endpoints.
+- Clarity and completeness of documentation for authentication and authorization processes.
 - Compliance with the provided instructions and requirements.
 
-## Note
-
-Remember that this task is focused on backend development skills using Go and Gin Framework. Avoid unnecessary complexity in the implementation. Database integration with persistent storage will be addressed in subsequent lessons; hence, focus on implementing data storage in memory for this task.
-
-# File Storage Implementation
-
-persisting tasks. The tasks are saved to a MongoDB database, and loaded from the database when the program starts.
-
-Here's how it works:
-
-- When the program starts, it connects to the MongoDB database.
-
-- When tasks are added or modified, the program calls the appropriate function (`InsertOne`, `UpdateOne`, etc.) to perform the operation in the MongoDB database.
-
-This allows the tasks to persist across multiple runs of the program and provides a more robust solution for large amounts of data and concurrent read/write operations.
-
-Please note that you need to have a running MongoDB server and provide the connection string in the `main.go` file.
+### Note
+Authentication and authorization are critical components of web applications to ensure secure access to resources. Pay close attention to implementing these mechanisms securely and effectively.
+```

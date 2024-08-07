@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -12,7 +13,8 @@ import (
 
 func ConnectDB() (*mongo.Client, error) {
 	// Create a MongoDB client
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	url:= os.Getenv("MONGO_URI")
+	clientOptions := options.Client().ApplyURI(url)
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
