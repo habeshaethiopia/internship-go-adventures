@@ -51,16 +51,16 @@ task_manager/
 └── go.mod
 ```
 
-- [`main.go`](task_manager_auth/main.go"): Entry point of the application.
+- [`main.go`](main.go): Entry point of the application.
 - [`controllers/controller.go`]( ): Handles incoming HTTP requests and invokes the appropriate service methods for both tasks and user authentication.
-- [`models/task.go`](task_manager_auth/models/task.go"): Defines the Task struct.
-- [`models/user.go`](task_manager_auth/models/user.go"): Defines the User struct.
-- [`data/task_service.go`](task_manager_auth/data/task_service.go"): Contains business logic and data manipulation functions for tasks.
-- [`data/user_service.go`](task_manager_auth/data/user_service.go"): Contains business logic and data manipulation functions for users, including hashing passwords.
-- [`middleware/auth_middleware.go`](task_manager_auth/middleware/auth_middleware.go"): Implements middleware to validate JWT tokens for authentication and authorization.
-- [`router/router.go`](task_manager_auth/router/router.go"): Sets up the routes and initializes the Gin router and defines the routing configuration for the API.
-- [`docs/api_documentation.md`](task_manager_auth/docs/api_documentation.md"): Contains API documentation and other related documentation.
-- [`go.mod`](task_manager_auth/go.mod"): Defines the module and its dependencies.
+- [`models/task.go`](models/task.go): Defines the Task struct.
+- [`models/user.go`](models/user.g): Defines the User struct.
+- [`data/task_service.go`](data/task_service.go): Contains business logic and data manipulation functions for tasks.
+- [`data/user_service.go`](data/user_service.go): Contains business logic and data manipulation functions for users, including hashing passwords.
+- [`middleware/auth_middleware.go`](middleware/auth_middleware.go): Implements middleware to validate JWT tokens for authentication and authorization.
+- [`router/router.go`](router/router.go): Sets up the routes and initializes the Gin router and defines the routing configuration for the API.
+- [`docs/api_documentation.md`](docs/api_documentation.md): Contains API documentation and other related documentation.
+- [`go.mod`](go.mod): Defines the module and its dependencies.
 
 ### Evaluation Criteria
 - Successful implementation of user management functionality for user registration and login.
