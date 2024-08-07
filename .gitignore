@@ -18,5 +18,5 @@ vendor/
 *.log
 
 *.sum
-*.mod
+
 *.cph
