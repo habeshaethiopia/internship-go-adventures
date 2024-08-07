@@ -168,7 +168,7 @@ func LoginUser(c *gin.Context) {
 	}
 
 	if storedUser.Email == "" || bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password)) != nil {
-		c.JSON(401, gin.H{"error": "Invalid email or password", "storedUser": storedUser})
+		c.JSON(401, gin.H{"error": "Invalid email or password"})
 		return
 	}
 	var jwtsecret = []byte(os.Getenv("JWT_SECRET_KEY"))
