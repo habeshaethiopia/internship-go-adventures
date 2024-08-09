@@ -26,13 +26,6 @@ import (
 	protected.POST("/tasks", controllers.PostTask)
 	protected.PUT("/tasks/:id", controllers.PutTask)
 	protected.DELETE("/tasks/:id", controllers.DeleteTask)
-	//
 
-
- 	// r.GET("/tasks",middleware.AuthMiddleware(), controllers.GetTasks)
- 	// r.GET("/tasks/:id", controllers.GetTaskById)
- 	// r.POST("/tasks", controllers.PostTask)
- 	// r.PUT("/tasks/:id", controllers.PutTask)
- 	// r.DELETE("/tasks/:id", controllers.DeleteTask)
  	return r
  }

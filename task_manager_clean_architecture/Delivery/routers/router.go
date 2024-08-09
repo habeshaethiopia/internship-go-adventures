@@ -1,38 +1,28 @@
 package routers
 
 import (
-	
-	"task/controllers"
-	"task/middleware"
+	"task/Delivery/controllers"
+	infrastructure "task/Infrastructure"
 
 	"github.com/gin-gonic/gin"
 )
- func Router() *gin.Engine {
- 	r := gin.Default()
-	r.POST("/register", controllers.RegisterUser)
-	r.POST("/login", controllers.LoginUser)
-	// User routes
-	authuser:=r.Group("/auth")
-	authuser.Use(middleware.AuthMiddleware())
-	authuser.GET("/users", controllers.GetUsers)
-	authuser.GET("/users/:id", controllers.GetUserById)
-	authuser.DELETE("/user/:id", controllers.DeleteUser)
-	authuser.PUT("/user/:id", controllers.UpdateUser)
+
+func Router(R *gin.Engine, secret string) {
+
+	tc := controllers.TaskController{}
+	uc := controllers.UserController{}
+
 	// Task routes
-	protected := r.Group("/api")
-	protected.Use(middleware.AuthMiddleware())
-	protected.GET("/tasks", controllers.GetTasks)
-	protected.GET("/tasks/:id", controllers.GetTaskById)
-	protected.POST("/tasks", controllers.PostTask)
-	protected.PUT("/tasks/:id", controllers.PutTask)
-	protected.DELETE("/tasks/:id", controllers.DeleteTask)
-	//
+	R.POST("/register", uc.CreateUser)
+	R.POST("/login", uc.LoginUser)
 
-
- 	// r.GET("/tasks",middleware.AuthMiddleware(), controllers.GetTasks)
- 	// r.GET("/tasks/:id", controllers.GetTaskById)
- 	// r.POST("/tasks", controllers.PostTask)
- 	// r.PUT("/tasks/:id", controllers.PutTask)
- 	// r.DELETE("/tasks/:id", controllers.DeleteTask)
- 	return r
- }
+	r := R.Group("/api")
+	r.Use(infrastructure.AuthMiddleware(secret))
+	r.GET("/tasks", tc.GetTasks)
+	r.GET("/tasks/:id", tc.GetTaskByID)
+	r.POST("/tasks", tc.CreateTask)
+	r.PUT("/tasks/:id", tc.UpdateTask)
+	r.DELETE("/tasks/:id", tc.DeleteTask)
+	// User routes
+	r.DELETE("/users/:id", uc.DeleteUser)
+}

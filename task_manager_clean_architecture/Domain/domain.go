@@ -1,7 +1,9 @@
 package domain
+
 import (
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -29,12 +31,14 @@ type TaskRepository interface {
 	DeleteTask(id string) error
 }
 
-
 type User struct {
-	ID       primitive.ObjectID   `bson:"_id,omitempty" json:"id,omitempty"`
-	Email    string               `json:"email"`
-	Password string               `json:"password"`
-	Role     string               `json:"role"`
+	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Name	   string             `json:"name"`
+	Email      string             `json:"email"`
+	Password   string             `json:"password"`
+	Role       string             `json:"role"`
+	Created_at time.Time          `json:"created_at"`
+	Updated_at time.Time          `json:"updated_at"`
 }
 
 type UserUsecase interface {
@@ -43,6 +47,7 @@ type UserUsecase interface {
 	GetUsers() ([]*User, error)
 	UpdateUser(user *User) error
 	DeleteUser(id string) error
+	Login(u *User) ([]byte, error)
 }
 type UserRepository interface {
 	CreateUser(user *User) error
@@ -51,4 +56,10 @@ type UserRepository interface {
 	UpdateUser(user *User) error
 	DeleteUser(id string) error
 }
-		
+
+type Claims struct {
+	UserID string `json:"user_id"`
+	Email  string `json:"email"`
+	Role   string `json:"role"`
+	jwt.StandardClaims
+}
