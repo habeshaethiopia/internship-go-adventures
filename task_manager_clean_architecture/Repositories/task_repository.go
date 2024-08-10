@@ -45,6 +45,7 @@ func (t *taskRepository) DeleteTask(id primitive.ObjectID) error {
 // GetTaskByID implements domain.TaskRepository.
 func (t *taskRepository) GetTaskByID(id primitive.ObjectID) (*domain.Task, error) {
 	collection := t.database.Collection(t.collection)
+	
 	var task domain.Task
 	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&task)
 	if err != nil {

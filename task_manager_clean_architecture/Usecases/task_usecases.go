@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"fmt"
 	domain "task/Domain"
 
 	"github.com/fatih/color"
@@ -55,7 +56,9 @@ func (t *taskUsecase) GetTasks() ([]*domain.Task, error) {
 // UpdateTask implements domain.TaskUsecase.
 func (t *taskUsecase) UpdateTask(task *domain.Task) error {
 	existingTask, err := t.taskRepository.GetTaskByID(task.ID)
+	
 	if err != nil {
+		fmt.Print(existingTask)
 		return err
 	}
 

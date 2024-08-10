@@ -48,6 +48,8 @@ type UserUsecase interface {
 	UpdateUser(user *User) error
 	DeleteUser(id string) error
 	Login(u User) (User, error)
+	GeneratesToken(claim Claims) (string, error)
+	Get_secret_key() []byte
 }
 type UserRepository interface {
 	CreateUser(user *User) error

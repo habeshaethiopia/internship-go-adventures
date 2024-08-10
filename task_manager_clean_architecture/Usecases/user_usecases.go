@@ -16,6 +16,8 @@ type userUsecase struct {
 	JwtService     infrastructure.JWTService
 }
 
+// GenerateToken implements domain.UserUsecase.
+
 func NewUserUsecase(userRepository domain.UserRepository, jwtService infrastructure.JWTService) domain.UserUsecase {
 	return &userUsecase{
 		UserRepository: userRepository,
@@ -41,7 +43,10 @@ func (u *userUsecase) CreateUser(user *domain.User) error {
 	if user.Password == "" {
 		return errors.New("password is required")
 	}
-
+	existingUser, err := u.UserRepository.GetUserByEmail(user.Email)
+	if err == nil {
+		return errors.New("user with email " + existingUser.Email + " already exists")
+	}
 	// Generate a unique ID for the user
 	user.ID = primitive.NewObjectID()
 
@@ -96,4 +101,10 @@ func (u *userUsecase) UpdateUser(user *domain.User) error {
 
 	// Save the user to the repository
 	return u.UserRepository.UpdateUser(user)
+}
+func (u *userUsecase) GeneratesToken(claim domain.Claims) (string, error) {
+	return u.JwtService.GenerateToken(&claim)
+}
+func (u *userUsecase) Get_secret_key() []byte {
+	return u.JwtService.SecretKey
 }
