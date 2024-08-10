@@ -1,28 +1,15 @@
 package routers
 
 import (
-	"task/Delivery/controllers"
 	infrastructure "task/Infrastructure"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func Router(R *gin.Engine, secret string) {
+func Router(R *gin.Engine, env infrastructure.Config, client *mongo.Database) {
 
-	tc := controllers.TaskController{}
-	uc := controllers.UserController{}
+	UserRouter(R, *client, env)
+	TaskRouter(R, *client, env)
 
-	// Task routes
-	R.POST("/register", uc.CreateUser)
-	R.POST("/login", uc.LoginUser)
-
-	r := R.Group("/api")
-	r.Use(infrastructure.AuthMiddleware(secret))
-	r.GET("/tasks", tc.GetTasks)
-	r.GET("/tasks/:id", tc.GetTaskByID)
-	r.POST("/tasks", tc.CreateTask)
-	r.PUT("/tasks/:id", tc.UpdateTask)
-	r.DELETE("/tasks/:id", tc.DeleteTask)
-	// User routes
-	r.DELETE("/users/:id", uc.DeleteUser)
 }

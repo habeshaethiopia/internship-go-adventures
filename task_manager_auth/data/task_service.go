@@ -15,7 +15,6 @@ import (
 	// "time"
 )
 
-
 var Tasks *mongo.Collection
 
 func FindAll(collection *mongo.Collection) []*models.Task {
@@ -46,7 +45,7 @@ func FindAll(collection *mongo.Collection) []*models.Task {
 	return results
 }
 func FindOne(collection *mongo.Collection, filter bson.M) (models.Task, error) {
-    
+
 	var result models.Task
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
@@ -80,14 +79,10 @@ func InsertOne(collection *mongo.Collection, data models.Task) error {
 
 // var abebe models.Task {ID: "1", Title: "Task 1", Description: "First task", DueDate: time.Now(), Status: "Pending"}
 func UpdateOne(collection *mongo.Collection, filter bson.M, update bson.M) (*mongo.UpdateResult, error) {
-
 	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
-
+	fmt.Printf("Updated %v documents in the trainers collection\n", updateResult.ModifiedCount)
 	return updateResult, nil
 }
-

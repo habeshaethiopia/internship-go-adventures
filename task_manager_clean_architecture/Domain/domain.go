@@ -25,15 +25,15 @@ type TaskUsecase interface {
 }
 type TaskRepository interface {
 	CreateTask(task *Task) error
-	GetTaskByID(id string) (*Task, error)
+	GetTaskByID(id primitive.ObjectID) (*Task, error)
 	GetTasks() ([]*Task, error)
 	UpdateTask(task *Task) error
-	DeleteTask(id string) error
+	DeleteTask(id primitive.ObjectID) error
 }
 
 type User struct {
 	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Name	   string             `json:"name"`
+	Name       string             `json:"name"`
 	Email      string             `json:"email"`
 	Password   string             `json:"password"`
 	Role       string             `json:"role"`
@@ -47,14 +47,15 @@ type UserUsecase interface {
 	GetUsers() ([]*User, error)
 	UpdateUser(user *User) error
 	DeleteUser(id string) error
-	Login(u *User) ([]byte, error)
+	Login(u User) (User, error)
 }
 type UserRepository interface {
 	CreateUser(user *User) error
-	GetUserByID(id string) (*User, error)
+	GetUserByID(id primitive.ObjectID) (*User, error)
 	GetUsers() ([]*User, error)
 	UpdateUser(user *User) error
-	DeleteUser(id string) error
+	DeleteUser(id primitive.ObjectID) error
+	GetUserByEmail(email string) (User, error)
 }
 
 type Claims struct {

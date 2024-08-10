@@ -2,44 +2,72 @@ package usecases
 
 import (
 	domain "task/Domain"
-	"time"
+
+	"github.com/fatih/color"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type taskUsecase struct {
 	taskRepository domain.TaskRepository
-	contextTimeout time.Duration
 }
 
-func NewTaskUsecase(taskRepository domain.TaskRepository, timeout time.Duration) domain.TaskUsecase {
+func NewTaskUsecase(taskRepository domain.TaskRepository) domain.TaskUsecase {
 	return &taskUsecase{
 		taskRepository: taskRepository,
-		contextTimeout: timeout,
 	}
 }
+
 // CreateTask implements domain.TaskUsecase.
 func (t *taskUsecase) CreateTask(task *domain.Task) error {
-	
-	panic("unimplemented")
+	task.ID = primitive.NewObjectID()
+	return t.taskRepository.CreateTask(task)
+
 }
 
 // DeleteTask implements domain.TaskUsecase.
 func (t *taskUsecase) DeleteTask(id string) error {
+	idx, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	color.Red("usecase delete task")
+	return t.taskRepository.DeleteTask(idx)
 
-	panic("unimplemented")
 }
 
 // GetTaskByID implements domain.TaskUsecase.
 func (t *taskUsecase) GetTaskByID(id string) (*domain.Task, error) {
-	panic("unimplemented")
+	idx, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return &domain.Task{}, err
+	}
+	color.Red("usecase get task by id")
+	return t.taskRepository.GetTaskByID(idx)
 }
 
 // GetTasks implements domain.TaskUsecase.
 func (t *taskUsecase) GetTasks() ([]*domain.Task, error) {
-	panic("unimplemented")
+
+	return t.taskRepository.GetTasks()
 }
 
 // UpdateTask implements domain.TaskUsecase.
+// UpdateTask implements domain.TaskUsecase.
 func (t *taskUsecase) UpdateTask(task *domain.Task) error {
-	panic("unimplemented")
-}
+	existingTask, err := t.taskRepository.GetTaskByID(task.ID)
+	if err != nil {
+		return err
+	}
 
+	if task.Title == "" {
+		task.Title = existingTask.Title
+	}
+	if task.Description == "" {
+		task.Description = existingTask.Description
+	}
+	if task.Status == "" {
+		task.Status = existingTask.Status
+	}
+
+	return t.taskRepository.UpdateTask(task)
+}

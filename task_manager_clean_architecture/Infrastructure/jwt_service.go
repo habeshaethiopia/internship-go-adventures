@@ -1,23 +1,25 @@
 package infrastructure
 
 import (
+	domain "task/Domain"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
 // JWTService represents a service for generating and validating JWT tokens.
 type JWTService struct {
-	secretKey string
+	secretKey []byte
 }
 
 // NewJWTService creates a new instance of JWTService with the given secret key.
 func NewJWTService(secretKey string) *JWTService {
 	return &JWTService{
-		secretKey: secretKey,
+		secretKey: []byte(secretKey),
 	}
 }
 
 // GenerateToken generates a new JWT token with the given claims.
-func (s *JWTService) GenerateToken(claims jwt.MapClaims) (string, error) {
+func (s *JWTService) GenerateToken(claims *domain.Claims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(s.secretKey))
 }

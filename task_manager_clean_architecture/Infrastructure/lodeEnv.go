@@ -12,6 +12,9 @@ type Config struct {
 	DatabaseUrl string
 	Port        int
 	Jwt_secret  string
+	Dbname      string
+	Usercoll    string
+	Taskcoll    string
 }
 
 func LoadEnv() (*Config, error) {
@@ -24,6 +27,11 @@ func LoadEnv() (*Config, error) {
 	dbURL := os.Getenv("DATABASE_URL")
 	portStr := os.Getenv("PORT")
 	jwtSecret := os.Getenv("JWT_SECRET")
+	dbname := os.Getenv("DB_NAME")
+
+	usercoll := os.Getenv("UserCollection")
+	
+	taskcoll := os.Getenv("TaskCollection")
 
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
@@ -35,6 +43,9 @@ func LoadEnv() (*Config, error) {
 		DatabaseUrl: dbURL,
 		Port:        port,
 		Jwt_secret:  jwtSecret,
+		Dbname:      dbname,
+		Usercoll:    usercoll,
+		Taskcoll:    taskcoll,
 	}
 
 	return config, nil

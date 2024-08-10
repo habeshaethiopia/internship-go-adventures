@@ -172,13 +172,13 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 	var jwtsecret = []byte(os.Getenv("JWT_SECRET_KEY"))
-	claims := &models.Claims{
-		UserID: storedUser.ID.Hex(),
-		Email:  storedUser.Email,
-		Role:   storedUser.Role,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
-		},
+		claims := &models.Claims{
+			UserID: storedUser.ID.Hex(),
+			Email:  storedUser.Email,
+			Role:   storedUser.Role,
+			StandardClaims: jwt.StandardClaims{
+				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+			},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
