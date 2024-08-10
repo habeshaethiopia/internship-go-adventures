@@ -49,24 +49,24 @@ Here’s how you can represent your folder structure with relative links in your
 
 ```plaintext
 task-manager/
-├── [Delivery/](./Delivery/)
-│   ├── [main.go](./Delivery/main.go)
-│   ├── [controllers/](./Delivery/controllers/)
-│   │   └── [controller.go](./Delivery/controllers/controller.go)
-│   └── [routers/](./Delivery/routers/)
-│       └── [router.go](./Delivery/routers/router.go)
-├── [Domain/](./Domain/)
-│   └── [domain.go](./Domain/domain.go)
-├── [Infrastructure/](./Infrastructure/)
-│   ├── [auth_middleWare.go](./Infrastructure/auth_middleWare.go)
-│   ├── [jwt_service.go](./Infrastructure/jwt_service.go)
-│   └── [password_service.go](./Infrastructure/password_service.go)
-├── [Repositories/](./Repositories/)
-│   ├── [task_repository.go](./Repositories/task_repository.go)
-│   └── [user_repository.go](./Repositories/user_repository.go)
-└── [Usecases/](./Usecases/)
-    ├── [task_usecases.go](./Usecases/task_usecases.go)
-    └── [user_usecases.go](./Usecases/user_usecases.go)
+├── Delivery/
+│   ├── main.go
+│   ├── controllers/
+│   │   └── controller.go
+│   └── routers/
+│       └── router.go
+├── Domain/
+│   └── domain.go
+├── Infrastructure/
+│   ├── auth_middleWare.go
+│   ├── jwt_service.go
+│   └── password_service.go
+├── Repositories/
+│   ├── task_repository.go
+│   └── user_repository.go
+└── Usecases/
+    ├── task_usecases.go
+    └── user_usecases.go
 ```
 
 ## Folder Descriptions
