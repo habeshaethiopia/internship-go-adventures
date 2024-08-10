@@ -24,8 +24,9 @@ func UserRouter(R *gin.Engine, client mongo.Database, config infrastructure.Conf
 	R.POST("/login", uc.LoginUser)
 	r := R.Group("/api")
 	r.Use(infrastructure.AuthMiddleware([]byte(config.Jwt_secret)))
-	r.GET("/user/:id", uc.GetUserByID)
-	r.DELETE("/user/:id", uc.DeleteUser)
+	r.GET("/users/:id", uc.GetUserByID)
+	r.DELETE("/users/:id", uc.DeleteUser)
 	r.GET("/users", uc.GetUsers)
+	r.PUT("/users/:id", uc.UpdateUser)
 
 }

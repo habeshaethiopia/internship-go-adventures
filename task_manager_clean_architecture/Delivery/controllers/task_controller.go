@@ -76,7 +76,7 @@ func (tc *TaskController) GetTaskByID(c *gin.Context) {
 	task, err := tc.TaskUsecase.GetTaskByID(id)
 
 	if err != nil || task.UserID != userID {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Task not found"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Task not found" , "task": task})
 		return
 	}
 	c.JSON(http.StatusOK, task)
@@ -123,12 +123,12 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 		return
 	}
 	id := c.Param("id")
-	task.ID, err = primitive.ObjectIDFromHex(id)
+	newid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	task.ID=newid
 	err = tc.TaskUsecase.UpdateTask(&task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error ": err.Error()})

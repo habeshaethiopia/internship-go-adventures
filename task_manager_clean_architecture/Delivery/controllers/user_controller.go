@@ -8,6 +8,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,7 +29,7 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, user)
+	c.JSON(http.StatusCreated, gin.H{"message": "user registerd sucessfully", "Id": user.ID})
 }
 func (uc *UserController) DeleteUser(c *gin.Context) {
 	claims := c.MustGet("claims").(*domain.Claims)
@@ -85,9 +86,15 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 	if claims.Role != "admin" && claims.UserID != id {
-		c.JSON(http.StatusForbidden, gin.H{"error": "you are anauthorized"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "you are unauthorized"})
 		return
 	}
+	NewId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	user.ID = NewId
 	err = uc.UserUsecase.UpdateUser(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -131,6 +138,6 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "User logged in successfully", "token": tokenString})
+	c.JSON(200, gin.H{"message": "User logged in successfully", "token": tokenString, "Id": claims.UserID})
 
 }

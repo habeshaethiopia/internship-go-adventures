@@ -21,6 +21,7 @@ func NewTaskUsecase(taskRepository domain.TaskRepository) domain.TaskUsecase {
 // CreateTask implements domain.TaskUsecase.
 func (t *taskUsecase) CreateTask(task *domain.Task) error {
 	task.ID = primitive.NewObjectID()
+	color.Red("usecase create task", task)
 	return t.taskRepository.CreateTask(task)
 
 }
@@ -71,6 +72,9 @@ func (t *taskUsecase) UpdateTask(task *domain.Task) error {
 	if task.Status == "" {
 		task.Status = existingTask.Status
 	}
+	task.UserID = existingTask.UserID
+	task.DueDate = existingTask.DueDate
+	color.Red("usecase update task")
 
 	return t.taskRepository.UpdateTask(task)
 }
