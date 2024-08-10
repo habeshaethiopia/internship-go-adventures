@@ -2,7 +2,7 @@
 
 ======================
 
-This is a RESTful API built with Go and Gin framework to manage users. It provides endpoints for creating, reading, updating and deleting users.
+This is a RESTful API built with Go and Gin framework to manage users. It provides endpoints for creating, reading, updating and deleting users and tasks.
 
 ## Features
 
