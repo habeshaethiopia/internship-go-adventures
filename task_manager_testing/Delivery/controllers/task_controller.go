@@ -136,3 +136,4 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, task)
 }
+
