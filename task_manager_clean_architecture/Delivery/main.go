@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		fmt.Print("Error in env.load")
 	}
-	fmt.Print(config)
+	// fmt.Print(config)
 	DB, client, err := infrastructure.ConnectDB(config.DatabaseUrl, config.Dbname)
 
 	if err != nil {
