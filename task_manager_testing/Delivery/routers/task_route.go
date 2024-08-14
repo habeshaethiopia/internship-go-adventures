@@ -6,8 +6,9 @@ import (
 	repositories "task/Repositories"
 	usecases "task/Usecases"
 
+	"task/mongo"
+
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func TaskRouter(R *gin.Engine, client mongo.Database, config infrastructure.Config) {
@@ -15,7 +16,7 @@ func TaskRouter(R *gin.Engine, client mongo.Database, config infrastructure.Conf
 	tr := repositories.NewTaskRepository(client, config.Taskcoll)
 	tu := usecases.NewTaskUsecase(tr)
 	tc := controllers.NewTaskController(tu)
-	
+
 	// Task routes
 	r := R.Group("/api")
 	r.Use(infrastructure.AuthMiddleware([]byte(config.Jwt_secret)))

@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+	"task/mongo"
 )
 
 type taskRepository struct {
@@ -38,7 +38,7 @@ func (t *taskRepository) DeleteTask(id primitive.ObjectID) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
+	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult)
 	return nil
 }
 

@@ -1,1 +1,1 @@
-package repositories_test
+package repositories

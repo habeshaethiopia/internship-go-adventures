@@ -8,7 +8,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
+	"task/mongo"
 )
 
 func UserRouter(R *gin.Engine, client mongo.Database, config infrastructure.Config) {

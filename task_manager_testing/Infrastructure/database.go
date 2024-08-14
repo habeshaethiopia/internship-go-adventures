@@ -5,37 +5,34 @@ import (
 	"fmt"
 	"log"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	// "time"
+	"task/mongo"
 )
 
-func ConnectDB(url string, DBname string) (*mongo.Database, *mongo.Client, error) {
+func ConnectDB(url string, DBname string) (mongo.Database, mongo.Client, error) {
 	// Create a MongoDB client
-	clientOptions := options.Client().ApplyURI(url)
-
 	// Connect to MongoDB
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	client, err := mongo.NewClient(url)
 	if err != nil {
-		return nil,nil, err
+		return nil, nil, err
 	}
 
-	err = client.Ping(context.Background(), nil)
+	err = client.Ping(context.Background())
 	if err != nil {
-		return nil, nil,err
+		return nil, nil, err
 	}
 
 	fmt.Println("Connected to MongoDB!")
-	DB:= client.Database(DBname)
-	return DB,client, nil
+	DB := client.Database(DBname)
+	return DB, client, nil
 }
 
-func CreateCollection(database mongo.Database,  collectionName string) *mongo.Collection {
+func CreateCollection(database mongo.Database, collectionName string) mongo.Collection {
 	collection := database.Collection(collectionName)
 	return collection
 }
 
-func CloseDB(client *mongo.Client) {
+func CloseDB(client mongo.Client) {
 	err := client.Disconnect(context.Background())
 	if err != nil {
 		log.Fatal(err)
@@ -43,4 +40,3 @@ func CloseDB(client *mongo.Client) {
 
 	fmt.Println("Connection to MongoDB closed.")
 }
-

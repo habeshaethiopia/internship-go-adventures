@@ -6,10 +6,10 @@ import (
 
 	domain "task/Domain"
 
-	"github.com/fatih/color"
+	"task/mongo"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type userRepository struct {
@@ -62,8 +62,7 @@ func (u *userRepository) DeleteUser(id primitive.ObjectID) error {
 	if err != nil {
 		return err
 	}
-	color.Red("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
-	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
+	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult)
 	return nil
 }
 
