@@ -132,48 +132,50 @@ func (suite *TaskControllerTestSuite) TestDeleteTask_Success() {
 	suite.mockTaskUsecase.AssertCalled(suite.T(), "GetTaskByID", mock.Anything)
 	suite.mockTaskUsecase.AssertCalled(suite.T(), "DeleteTask", mock.Anything)
 }
-func (suite *TaskControllerTestSuite) TestGetTaskByID_Success() {
+func (suite *TaskControllerTestSuite) TestGetTaskByID() {
 	// Prepare the request and context
-	req, err := http.NewRequest(http.MethodGet, "/tasks/123", nil)
-	if err != nil {
-		suite.T().Fatal(err)
-	}
+	suite.Run("Success", func() {
+		req, err := http.NewRequest(http.MethodGet, "/tasks/123", nil)
+		if err != nil {
+			suite.T().Fatal(err)
+		}
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Request = req
-	id := primitive.NewObjectID().Hex()
-	c.Set("claims", &domain.Claims{UserID: id}) // Example ObjectID
-	// Prepare the expected task object and set up mock behavior
-	userID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		suite.T().Fatal(err)
-	}
-	expectedTask := &domain.Task{
-		ID:     primitive.NewObjectID(),
-		Title:  "test",
-		Status: "test",
-		UserID: userID,
-	}
-	suite.mockTaskUsecase.On("GetTaskByID", mock.Anything).Return(expectedTask, nil).Once()
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
+		id := primitive.NewObjectID().Hex()
+		c.Set("claims", &domain.Claims{UserID: id, Role: "admin"}) // Example ObjectID
+		// Prepare the expected task object and set up mock behavior
+		userID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			suite.T().Fatal(err)
+		}
+		expectedTask := &domain.Task{
+			ID:     primitive.NewObjectID(),
+			Title:  "test",
+			Status: "test",
+			UserID: userID,
+		}
+		suite.mockTaskUsecase.On("GetTaskByID", mock.Anything).Return(expectedTask, nil).Once()
 
-	// Create the task controller and call the GetTaskByID method
-	suite.taskController.GetTaskByID(c)
+		// Create the task controller and call the GetTaskByID method
+		suite.taskController.GetTaskByID(c)
 
-	// Verify the response
-	if w.Code != http.StatusOK {
-		suite.T().Errorf("expected status code %d but got %d", http.StatusOK, w.Code)
-	}
-	var response domain.Task
-	err = json.NewDecoder(w.Body).Decode(&response)
-	if err != nil {
-		suite.T().Fatal(err)
-	}
-	if !reflect.DeepEqual(response, *expectedTask) {
-		suite.T().Errorf("expected response body %+v but got %+v", *expectedTask, response)
-	}
+		// Verify the response
+		if w.Code != http.StatusOK {
+			suite.T().Errorf("expected status code %d but got %d", http.StatusOK, w.Code)
+		}
+		var response domain.Task
+		err = json.NewDecoder(w.Body).Decode(&response)
+		if err != nil {
+			suite.T().Fatal(err)
+		}
+		if !reflect.DeepEqual(response, *expectedTask) {
+			suite.T().Errorf("expected response body %+v but got %+v", *expectedTask, response)
+		}
 
-	suite.mockTaskUsecase.AssertCalled(suite.T(), "GetTaskByID", mock.Anything)
+		suite.mockTaskUsecase.AssertCalled(suite.T(), "GetTaskByID", mock.Anything)
+	})
 }
 func (suite *TaskControllerTestSuite) TestGetTasks_Success() {
 	// Prepare the request and context

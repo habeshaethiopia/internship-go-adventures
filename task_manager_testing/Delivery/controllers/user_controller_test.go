@@ -8,11 +8,11 @@ import (
 	"reflect"
 	"strings"
 	domain "task/Domain"
+	infrastructure "task/Infrastructure"
 	mocks "task/mock"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -276,7 +276,7 @@ func (suite *UserControllerSuite) TestGetUsers() {
 
 func (suite *UserControllerSuite) TestUpdateUser() {
 	// Mock the usecase method
-	suite.Run("update success", func(){
+	suite.Run("update success", func() {
 		reqBody := `{"name":"testuser","email":""}`
 		req, err := http.NewRequest(http.MethodPut, "/users/"+primitive.NewObjectID().Hex(), strings.NewReader(reqBody))
 		if err != nil {
@@ -292,7 +292,7 @@ func (suite *UserControllerSuite) TestUpdateUser() {
 		}
 		id := primitive.NewObjectID().Hex()
 		c.Set("claims", &domain.Claims{UserID: id, Role: "admin"}) // Example ObjectID
-		suite.usecase.On("UpdateUser",mock.Anything).Return(nil).Once()
+		suite.usecase.On("UpdateUser", mock.Anything).Return(nil).Once()
 		// Create the user controller and call the UpdateUser method
 		suite.controller.UpdateUser(c)
 		// Verify the response
@@ -300,27 +300,54 @@ func (suite *UserControllerSuite) TestUpdateUser() {
 			suite.T().Errorf("expected status code %d but got %d", http.StatusOK, w.Code)
 		}
 		suite.usecase.AssertCalled(suite.T(), "UpdateUser", mock.Anything)
-		})
+	})
 
-	
 }
 
 func (suite *UserControllerSuite) TestLoginUser() {
-	// Mock the usecase method
-	suite.usecase.On("LoginUser", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return("token", nil)
-
-	// Send a POST request to the endpoint
-	req, _ := http.NewRequest("POST", "/users/login", nil)
-	resp := executeRequest(suite.router, req)
-
-	// Assert that the response status code is 200 OK
-	assert.Equal(suite.T(), http.StatusOK, resp.Code)
-
-	// Assert that the response body contains the token
-	assert.Contains(suite.T(), resp.Body, "token")
+	suite.Run("successfull login", func() {
+		reqBody := `{"email":"abcd@ks.com","password":"testpassword"}`
+		req, err := http.NewRequest(http.MethodPost, "/users/login", strings.NewReader(reqBody))
+		if err != nil {
+			suite.FailNow("error when creating the request")
+		}
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
+		// Prepare the expected user object and set up mock behavior
+		hashedpass, err := infrastructure.HashPassword("testpassword")
+		if err != nil {
+			suite.T().Fatal(err)
+		}
+		expectedUser := domain.User{
+			ID:       primitive.NewObjectID(),
+			Name:     "testuser",
+			Email:    "abcd@ks.com",
+			Password: hashedpass,
+			Role:     "user",
+		}
+		suite.usecase.On("Login", mock.Anything).Return(expectedUser, nil).Once()
+		suite.usecase.On("GeneratesToken", mock.Anything).Return("token", nil)
+		// Create the user controller and call the CreateUser method
+		suite.controller.LoginUser(c)
+		// Verify the response
+		if w.Code != http.StatusOK {
+			suite.T().Errorf("expected status code %d but got %d", http.StatusOK, w.Code)
+		}
+		var responseUser domain.User
+		err = json.NewDecoder(w.Body).Decode(&responseUser)
+		if err != nil {
+			suite.T().Fatal(err)
+		}
+		if !reflect.DeepEqual(responseUser.ID, (expectedUser).ID) {
+			suite.T().Errorf("expected response body %+v but got %+v", expectedUser, responseUser)
+		}
+		suite.usecase.AssertCalled(suite.T(), "Login", mock.AnythingOfType("domain.User"))
+	})
 }
 
-func executeRequest(router *gin.Engine, req *http.Request) *httptest.ResponseRecorder {
+func ExecuteRequest(router *gin.Engine, req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	router.ServeHTTP(rr, req)
 	return rr
