@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	domain "task/Domain"
 
@@ -10,6 +11,12 @@ import (
 
 type TaskController struct {
 	TaskUsecase domain.TaskUsecase
+}
+
+func NewTaskController(usecase domain.TaskUsecase) *TaskController {
+	return &TaskController{
+		TaskUsecase: usecase,
+	}
 }
 
 func (tc *TaskController) CreateTask(c *gin.Context) {
@@ -35,6 +42,7 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 }
 func (tc *TaskController) DeleteTask(ctx *gin.Context) {
 	id := ctx.Param("id")
+	fmt.Println(id)
 
 	claims := ctx.MustGet("claims").(*domain.Claims)
 	userID, err := primitive.ObjectIDFromHex(claims.UserID)
@@ -48,11 +56,11 @@ func (tc *TaskController) DeleteTask(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 		return
 	}
-
 	if claims.Role != "admin" && result.UserID != userID {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
+
 
 	err = tc.TaskUsecase.DeleteTask(id)
 	if err != nil {
@@ -75,8 +83,8 @@ func (tc *TaskController) GetTaskByID(c *gin.Context) {
 
 	task, err := tc.TaskUsecase.GetTaskByID(id)
 
-	if err != nil || task.UserID != userID {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Task not found" , "task": task})
+	if err != nil || task.UserID != userID || claims.Role != "admin"{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Task not found", "task": task})
 		return
 	}
 	c.JSON(http.StatusOK, task)
@@ -94,14 +102,14 @@ func (tc *TaskController) GetTasks(c *gin.Context) {
 	claims := c.MustGet("claims").(*domain.Claims)
 	userID, err := primitive.ObjectIDFromHex(claims.UserID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID","clamis": claims.UserID})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID", "clamis": claims.UserID})
 		return
 	}
 	if claims.Role == "admin" {
 		c.IndentedJSON(http.StatusOK, tasks)
 		return
 	}
-	
+
 	// Find all tasks associated with the logged user's ID
 	var taskList []domain.Task
 	for _, task_s := range tasks {
@@ -110,10 +118,8 @@ func (tc *TaskController) GetTasks(c *gin.Context) {
 		}
 	}
 
-	
-
 	c.IndentedJSON(http.StatusOK, taskList)
-	
+
 }
 func (tc *TaskController) UpdateTask(c *gin.Context) {
 	var task domain.Task
@@ -122,13 +128,14 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	id := c.Param("id")
 	newid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	task.ID=newid
+	task.ID = newid
 	err = tc.TaskUsecase.UpdateTask(&task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error ": err.Error()})
@@ -136,4 +143,3 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, task)
 }
-

@@ -14,9 +14,8 @@ func TaskRouter(R *gin.Engine, client mongo.Database, config infrastructure.Conf
 
 	tr := repositories.NewTaskRepository(client, config.Taskcoll)
 	tu := usecases.NewTaskUsecase(tr)
-	tc := &controllers.TaskController{
-		TaskUsecase: tu,
-	}
+	tc := controllers.NewTaskController(tu)
+	
 	// Task routes
 	r := R.Group("/api")
 	r.Use(infrastructure.AuthMiddleware([]byte(config.Jwt_secret)))

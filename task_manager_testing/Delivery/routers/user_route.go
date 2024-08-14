@@ -16,9 +16,8 @@ func UserRouter(R *gin.Engine, client mongo.Database, config infrastructure.Conf
 	ur := repositories.NewUserRepository(client, config.Usercoll)
 	jwtService := infrastructure.NewJWTService(config.Jwt_secret)
 	uu := usecases.NewUserUsecase(ur, *jwtService)
-	uc := &controllers.UserController{
-		UserUsecase: uu,
-	}
+	uc := controllers.NewUserController(uu)
+	
 	// Task routes
 	R.POST("/register", uc.CreateUser)
 	R.POST("/login", uc.LoginUser)
